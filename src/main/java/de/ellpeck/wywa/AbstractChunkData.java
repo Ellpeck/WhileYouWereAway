@@ -30,7 +30,7 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
     protected abstract void tickTileEntities(int amount);
 
     public void onLoaded() {
-        if (false && Config.useMultiThreading) {
+        if (Config.useMultiThreading) {
             if (workerThread == null) {
                 WYWA.LOGGER.info("Starting worker thread");
                 workerThread = new WorkerThread();
