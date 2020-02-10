@@ -5,7 +5,6 @@ import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.BlockStem;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -39,7 +38,8 @@ public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
 
         world.profiler.startSection("wywa_chunk_loaded");
         world.profiler.startSection("wywa_random");
-        int amount = this.getRandomTickAmountPerBlockInSixteenCube(ticksPassed);
+        int randomPassed = Math.min(ticksPassed, Config.maxRandomTickingBlocksTicks);
+        int amount = this.getRandomTickAmountPerBlockInSixteenCube(randomPassed);
         if (amount > 0) {
             for (int y = 0; y < 256; y += 16)
                 this.tickSubsectionRandomly(this.chunk.x * 16, y, this.chunk.z * 16, amount);
@@ -47,7 +47,8 @@ public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
         world.profiler.endSection();
 
         world.profiler.startSection("wywa_tiles");
-        for (int i = 0; i < ticksPassed; i++) {
+        int tilePassed = Math.min(ticksPassed, Config.maxTickingTileEntitiesTicks);
+        for (int i = 0; i < tilePassed; i++) {
             for (TileEntity tile : this.chunk.getTileEntityMap().values())
                 this.tickTileEntity(tile);
         }
@@ -84,10 +85,7 @@ public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
     private boolean shouldTickRandomly(Block block) {
         if (block instanceof BlockCrops || block instanceof BlockStem || block instanceof BlockSapling)
             return true;
-        // TODO change these to be in the config instead
-        if (block == Blocks.VINE || block == Blocks.CACTUS || block == Blocks.REEDS || block == Blocks.NETHER_WART || block == Blocks.RED_MUSHROOM || block == Blocks.BROWN_MUSHROOM || block == Blocks.CHORUS_FLOWER)
-            return true;
-        return false;
+        return Config.randomTickingBlocksBlacklist != Config.randomTickingBlocks.contains(block.getRegistryName().toString());
     }
 
     private void tickTileEntity(TileEntity tile) {
@@ -100,10 +98,7 @@ public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
     }
 
     private boolean shouldTickTileEntity(Block block) {
-        // TODO change these to be in the config instead
-        if (block == Blocks.FURNACE || block == Blocks.LIT_FURNACE || block == Blocks.BREWING_STAND)
-            return true;
-        return false;
+        return Config.tickingTileEntitiesBlacklist != Config.tickingTileEntities.contains(block.getRegistryName().toString());
     }
 
     @Override

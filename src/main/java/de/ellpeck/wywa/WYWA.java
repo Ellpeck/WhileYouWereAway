@@ -26,6 +26,7 @@ public class WYWA {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        Config.init(event.getSuggestedConfigurationFile());
         CapabilityManager.INSTANCE.register(ChunkData.class, new Capability.IStorage<ChunkData>() {
             @Nullable
             @Override
