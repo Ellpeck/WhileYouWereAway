@@ -5,7 +5,7 @@ import java.util.Queue;
 
 public class WorkerThread extends Thread {
 
-    private final Queue<ChunkData> queue = new ArrayDeque<>();
+    private final Queue<AbstractChunkData> queue = new ArrayDeque<>();
 
     @Override
     public void run() {
@@ -13,14 +13,14 @@ public class WorkerThread extends Thread {
             if (this.queue.isEmpty())
                 continue;
 
-            ChunkData next;
+            AbstractChunkData next;
             synchronized (this.queue) {
                 next = this.queue.remove();
             }
             try {
                 next.tickEverything();
             } catch (Exception e) {
-                WYWA.LOGGER.error("There was an error in the worker thread", e);
+                WYWA.LOGGER.error("There was an error in the worker thread. If you get this a lot, consider disabling multi threading in the config", e);
             }
 
             try {
@@ -30,7 +30,7 @@ public class WorkerThread extends Thread {
         }
     }
 
-    public void enqueue(ChunkData data) {
+    public void enqueue(AbstractChunkData data) {
         synchronized (this.queue) {
             this.queue.add(data);
         }
