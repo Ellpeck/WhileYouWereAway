@@ -60,9 +60,7 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
         world.profiler.startSection("wywa_tiles");
         int tilePassed = Math.min(ticksPassed, Config.maxTickingTileEntitiesTicks);
         if (tilePassed > 0)
-            this.
-
-                    tickTileEntities(tilePassed);
+            this.tickTileEntities(tilePassed);
         world.profiler.endSection();
         world.profiler.endSection();
     }
