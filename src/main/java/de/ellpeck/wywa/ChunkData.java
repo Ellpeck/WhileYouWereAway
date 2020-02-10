@@ -21,6 +21,8 @@ import javax.annotation.Nullable;
 
 public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
 
+    private static WorkerThread workerThread;
+
     public final Chunk chunk;
     public long unloadWorldTime;
 
@@ -29,6 +31,20 @@ public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
     }
 
     public void onChunkLoaded() {
+        if (Config.useMultiThreading) {
+            if (workerThread == null) {
+                WYWA.LOGGER.info("Starting worker thread");
+                workerThread = new WorkerThread();
+                workerThread.setDaemon(true);
+                workerThread.start();
+            }
+            workerThread.enqueue(this);
+        } else {
+            this.tickEverything();
+        }
+    }
+
+    public void tickEverything() {
         if (this.unloadWorldTime <= 0)
             return;
         World world = this.chunk.getWorld();
