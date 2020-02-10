@@ -16,15 +16,6 @@ public class CubicChunkEvents {
     }
 
     @SubscribeEvent
-    public void onCubeUnload(CubeEvent.Unload event) {
-        ICube cube = event.getCube();
-        if (cube.hasCapability(WYWA.capability, null)) {
-            AbstractChunkData data = cube.getCapability(WYWA.capability, null);
-            data.unloadWorldTime = cube.getWorld().getTotalWorldTime();
-        }
-    }
-
-    @SubscribeEvent
     public void onCubeLoad(CubeEvent.Load event) {
         ICube cube = event.getCube();
         if (cube.hasCapability(WYWA.capability, null)) {

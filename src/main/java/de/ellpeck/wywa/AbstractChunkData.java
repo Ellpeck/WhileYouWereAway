@@ -20,8 +20,7 @@ import javax.annotation.Nullable;
 
 public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTagCompound> {
 
-    private static WorkerThread workerThread;
-    public long unloadWorldTime;
+    private long lastSaveTime;
 
     protected abstract World getWorld();
 
@@ -30,24 +29,12 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
     protected abstract void tickTileEntities(int amount);
 
     public void onLoaded() {
-        if (Config.useMultiThreading) {
-            if (workerThread == null) {
-                WYWA.LOGGER.info("Starting worker thread");
-                workerThread = new WorkerThread();
-                workerThread.setDaemon(true);
-                workerThread.start();
-            }
-            workerThread.enqueue(this);
-        } else {
-            this.tickEverything();
-        }
-    }
-
-    public void tickEverything() {
-        if (this.unloadWorldTime <= 0)
+        if (this.lastSaveTime <= 0)
             return;
         World world = this.getWorld();
-        int ticksPassed = (int) (world.getTotalWorldTime() - this.unloadWorldTime);
+        if (world.isRemote)
+            return;
+        int ticksPassed = (int) (world.getTotalWorldTime() - this.lastSaveTime);
         if (ticksPassed <= 0)
             return;
 
@@ -114,14 +101,16 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
 
     @Override
     public NBTTagCompound serializeNBT() {
+        this.lastSaveTime = this.getWorld().getTotalWorldTime();
+
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setLong("unload_time", this.unloadWorldTime);
+        compound.setLong("unload_time", this.lastSaveTime);
         return compound;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound compound) {
-        this.unloadWorldTime = compound.getLong("unload_time");
+        this.lastSaveTime = compound.getLong("unload_time");
     }
 
     @Override

@@ -19,7 +19,6 @@ public final class Config {
     public static boolean randomTickingBlocksBlacklist;
     public static int maxTickingTileEntitiesTicks;
     public static int maxRandomTickingBlocksTicks;
-    public static boolean useMultiThreading;
 
     public static void init(File file) {
         Configuration config = new Configuration(file);
@@ -31,7 +30,6 @@ public final class Config {
         randomTickingBlocksBlacklist = config.getBoolean("randomTickingBlocksBlacklist", CATEGORY_GENERAL, false, "If the randomTickingBlocks list should serve as a blacklist rather than a whitelist");
         maxTickingTileEntitiesTicks = config.getInt("maxTickingTileEntitiesTicks", CATEGORY_GENERAL, 288000, 20, 1000000, "The maximum amount of ticks that tile entities should catch up on");
         maxRandomTickingBlocksTicks = config.getInt("maxRandomTickingBlocksTicks", CATEGORY_GENERAL, 288000, 20, 1000000, "The maximum amount of ticks that random ticking blocks should catch up on");
-        useMultiThreading = config.getBoolean("useMultiThreading", CATEGORY_GENERAL, true, "Disable this option if you get a lot of errors in the console from the worker thread");
 
         if (config.hasChanged())
             config.save();

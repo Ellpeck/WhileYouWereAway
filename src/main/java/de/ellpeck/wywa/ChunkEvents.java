@@ -14,15 +14,6 @@ public class ChunkEvents {
     }
 
     @SubscribeEvent
-    public void onChunkUnload(ChunkEvent.Unload event) {
-        Chunk chunk = event.getChunk();
-        if (chunk.hasCapability(WYWA.capability, null)) {
-            AbstractChunkData data = chunk.getCapability(WYWA.capability, null);
-            data.unloadWorldTime = chunk.getWorld().getTotalWorldTime();
-        }
-    }
-
-    @SubscribeEvent
     public void onChunkLoad(ChunkEvent.Load event) {
         Chunk chunk = event.getChunk();
         if (chunk.hasCapability(WYWA.capability, null)) {
