@@ -20,7 +20,7 @@ public class WorkerThread extends Thread {
             try {
                 next.tickEverything();
             } catch (Exception e) {
-                WYWA.LOGGER.error("onChunkLoaded threw an error in the worker thread", e);
+                WYWA.LOGGER.error("There was an error in the worker thread", e);
             }
 
             try {
