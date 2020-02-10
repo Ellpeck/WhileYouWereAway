@@ -1,8 +1,10 @@
 package de.ellpeck.wywa;
 
 import de.ellpeck.wywa.compat.CubicChunkEvents;
+import io.github.opencubicchunks.cubicchunks.api.world.ICubicWorld;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -26,17 +28,18 @@ public class WYWA {
     @CapabilityInject(AbstractChunkData.class)
     public static Capability<AbstractChunkData> capability;
 
+    public static boolean isCubicChunksLoaded;
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         Config.init(event.getSuggestedConfigurationFile());
 
-        if (Loader.isModLoaded("cubicchunks")) {
+        isCubicChunksLoaded = Loader.isModLoaded("cubicchunks");
+        if (isCubicChunksLoaded) {
             MinecraftForge.EVENT_BUS.register(new CubicChunkEvents());
-            LOGGER.info("Using cubic chunks");
-        } else {
-            MinecraftForge.EVENT_BUS.register(new ChunkEvents());
-            LOGGER.info("Using vanilla chunks");
+            LOGGER.info("Cubic Chunks is loaded, registering callbacks");
         }
+        MinecraftForge.EVENT_BUS.register(new ChunkEvents());
 
         CapabilityManager.INSTANCE.register(AbstractChunkData.class, new Capability.IStorage<AbstractChunkData>() {
             @Nullable
@@ -50,5 +53,12 @@ public class WYWA {
 
             }
         }, () -> null);
+    }
+
+    public static boolean isCubicChunks(World world) {
+        if (world != null && isCubicChunksLoaded) {
+            return ((ICubicWorld) world).isCubicWorld();
+        }
+        return false;
     }
 }

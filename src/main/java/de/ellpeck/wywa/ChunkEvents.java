@@ -10,13 +10,15 @@ public class ChunkEvents {
 
     @SubscribeEvent
     public void onChunkCapsAttach(AttachCapabilitiesEvent<Chunk> event) {
-        event.addCapability(new ResourceLocation(WYWA.MODID, "data"), new ChunkData(event.getObject()));
+        Chunk chunk = event.getObject();
+        if (!WYWA.isCubicChunks(chunk.getWorld()))
+            event.addCapability(new ResourceLocation(WYWA.MODID, "data"), new ChunkData(chunk));
     }
 
     @SubscribeEvent
     public void onChunkLoad(ChunkEvent.Load event) {
         Chunk chunk = event.getChunk();
-        if (chunk.hasCapability(WYWA.capability, null)) {
+        if (!WYWA.isCubicChunks(chunk.getWorld()) && chunk.hasCapability(WYWA.capability, null)) {
             AbstractChunkData data = chunk.getCapability(WYWA.capability, null);
             data.onLoaded();
         }

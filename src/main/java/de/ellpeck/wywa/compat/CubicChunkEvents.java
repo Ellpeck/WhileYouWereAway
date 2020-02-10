@@ -12,13 +12,15 @@ public class CubicChunkEvents {
 
     @SubscribeEvent
     public void onCubeCapsAttach(AttachCapabilitiesEvent<ICube> event) {
-        event.addCapability(new ResourceLocation(WYWA.MODID, "data"), new CubicChunkData(event.getObject()));
+        ICube cube = event.getObject();
+        if (WYWA.isCubicChunks(cube.getWorld()))
+            event.addCapability(new ResourceLocation(WYWA.MODID, "data"), new CubicChunkData(cube));
     }
 
     @SubscribeEvent
     public void onCubeLoad(CubeEvent.Load event) {
         ICube cube = event.getCube();
-        if (cube.hasCapability(WYWA.capability, null)) {
+        if (WYWA.isCubicChunks(cube.getWorld()) && cube.hasCapability(WYWA.capability, null)) {
             AbstractChunkData data = cube.getCapability(WYWA.capability, null);
             data.onLoaded();
         }

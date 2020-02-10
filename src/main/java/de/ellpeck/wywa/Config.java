@@ -28,8 +28,8 @@ public final class Config {
         randomTickingBlocks = new HashSet<>(Arrays.asList(config.getStringList("randomTickingBlocks", CATEGORY_GENERAL, getDefaultRandomTickBlocks(), "The registry names of blocks that should catch up on lost random ticks when chunks are being loaded")));
         tickingTileEntitiesBlacklist = config.getBoolean("tickingTileEntitiesBlacklist", CATEGORY_GENERAL, false, "If the tickingTileEntities list should serve as a blacklist rather than a whitelist");
         randomTickingBlocksBlacklist = config.getBoolean("randomTickingBlocksBlacklist", CATEGORY_GENERAL, false, "If the randomTickingBlocks list should serve as a blacklist rather than a whitelist");
-        maxTickingTileEntitiesTicks = config.getInt("maxTickingTileEntitiesTicks", CATEGORY_GENERAL, 288000, 20, 1000000, "The maximum amount of ticks that tile entities should catch up on");
-        maxRandomTickingBlocksTicks = config.getInt("maxRandomTickingBlocksTicks", CATEGORY_GENERAL, 288000, 20, 1000000, "The maximum amount of ticks that random ticking blocks should catch up on");
+        maxTickingTileEntitiesTicks = config.getInt("maxTickingTileEntitiesTicks", CATEGORY_GENERAL, 100000, 20, 1000000, "The maximum amount of ticks that tile entities should catch up on");
+        maxRandomTickingBlocksTicks = config.getInt("maxRandomTickingBlocksTicks", CATEGORY_GENERAL, 100000, 20, 1000000, "The maximum amount of ticks that random ticking blocks should catch up on");
 
         if (config.hasChanged())
             config.save();
