@@ -19,6 +19,7 @@ public final class Config {
     public static boolean randomTickingBlocksBlacklist;
     public static int maxTickingTileEntitiesTicks;
     public static int maxRandomTickingBlocksTicks;
+    public static boolean useAsyncOperations;
 
     public static void init(File file) {
         Configuration config = new Configuration(file);
@@ -30,6 +31,7 @@ public final class Config {
         randomTickingBlocksBlacklist = config.getBoolean("randomTickingBlocksBlacklist", CATEGORY_GENERAL, false, "If the randomTickingBlocks list should serve as a blacklist rather than a whitelist");
         maxTickingTileEntitiesTicks = config.getInt("maxTickingTileEntitiesTicks", CATEGORY_GENERAL, 100000, 20, 1000000, "The maximum amount of ticks that tile entities should catch up on");
         maxRandomTickingBlocksTicks = config.getInt("maxRandomTickingBlocksTicks", CATEGORY_GENERAL, 100000, 20, 1000000, "The maximum amount of ticks that random ticking blocks should catch up on");
+        useAsyncOperations = config.getBoolean("useAsyncOperations", CATEGORY_GENERAL, true, "If asynchronous operations should be used for random tick block collection to speed up chunk loading");
 
         if (config.hasChanged())
             config.save();

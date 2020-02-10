@@ -17,6 +17,8 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTagCompound> {
 
@@ -24,7 +26,7 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
 
     protected abstract World getWorld();
 
-    protected abstract void tickRandomly(int amount);
+    protected abstract List<BlockPos> collectRandomTickBlocks();
 
     protected abstract void tickTileEntities(int amount);
 
@@ -42,27 +44,27 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
         world.profiler.startSection("wywa_random");
         int randomPassed = Math.min(ticksPassed, Config.maxRandomTickingBlocksTicks);
         int randomAmount = this.getRandomTickAmountPerBlockInSixteenCube(randomPassed);
-        if (randomAmount > 0)
-            this.tickRandomly(randomAmount);
+        if (randomAmount > 0) {
+            if (Config.useAsyncOperations) {
+                CompletableFuture.supplyAsync(this::collectRandomTickBlocks).thenAccept(blocks -> {
+                    for (BlockPos pos : blocks)
+                        this.tickRandomlyAt(pos, randomAmount);
+                });
+            } else {
+                for (BlockPos pos : this.collectRandomTickBlocks())
+                    this.tickRandomlyAt(pos, randomAmount);
+            }
+        }
         world.profiler.endSection();
 
         world.profiler.startSection("wywa_tiles");
         int tilePassed = Math.min(ticksPassed, Config.maxTickingTileEntitiesTicks);
         if (tilePassed > 0)
-            this.tickTileEntities(tilePassed);
-        world.profiler.endSection();
-        world.profiler.endSection();
-    }
+            this.
 
-    protected void tickSubsectionRandomly(int startX, int startY, int startZ, int amount) {
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < 16; y++) {
-                    BlockPos offset = new BlockPos(startX + x, startY + y, startZ + z);
-                    this.tickRandomlyAt(offset, amount);
-                }
-            }
-        }
+                    tickTileEntities(tilePassed);
+        world.profiler.endSection();
+        world.profiler.endSection();
     }
 
     protected void tickTileEntity(TileEntity tile) {
@@ -78,13 +80,15 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
         World world = this.getWorld();
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        if (!block.getTickRandomly() || !this.shouldTickRandomly(block))
-            return;
         for (int i = 0; i < amount; i++)
             block.randomTick(world, pos, state, world.rand);
     }
 
-    private boolean shouldTickRandomly(Block block) {
+    protected boolean shouldTickRandomly(BlockPos pos) {
+        IBlockState state = this.getWorld().getBlockState(pos);
+        Block block = state.getBlock();
+        if (!block.getTickRandomly())
+            return false;
         if (block instanceof BlockCrops || block instanceof BlockStem || block instanceof BlockSapling)
             return true;
         return Config.randomTickingBlocksBlacklist != Config.randomTickingBlocks.contains(block.getRegistryName().toString());
