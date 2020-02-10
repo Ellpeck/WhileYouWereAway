@@ -47,8 +47,9 @@ public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
         world.profiler.endSection();
 
         world.profiler.startSection("wywa_tiles");
-        for (TileEntity tile : this.chunk.getTileEntityMap().values()) {
-            this.tickTileEntity(tile, ticksPassed);
+        for (int i = 0; i < ticksPassed; i++) {
+            for (TileEntity tile : this.chunk.getTileEntityMap().values())
+                this.tickTileEntity(tile);
         }
         world.profiler.endSection();
         world.profiler.endSection();
@@ -89,15 +90,13 @@ public class ChunkData implements ICapabilitySerializable<NBTTagCompound> {
         return false;
     }
 
-    private void tickTileEntity(TileEntity tile, int passed) {
+    private void tickTileEntity(TileEntity tile) {
         if (!(tile instanceof ITickable))
             return;
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (!this.shouldTickTileEntity(state.getBlock()))
             return;
-        ITickable tickable = (ITickable) tile;
-        for (int i = 0; i < passed; i++)
-            tickable.update();
+        ((ITickable) tile).update();
     }
 
     private boolean shouldTickTileEntity(Block block) {
