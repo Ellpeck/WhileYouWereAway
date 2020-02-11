@@ -29,7 +29,8 @@ steps:
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
     tasks: 'clean build'
-- task: PublishPipelineArtifact@1
+- task: PublishBuildArtifacts@1
   inputs:
-    targetPath: 'build/libs'
-    publishLocation: 'pipeline'
+    PathtoPublish: 'build/libs'
+    ArtifactName: 'Release'
+    publishLocation: 'Container'
