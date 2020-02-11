@@ -40,8 +40,6 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
         if (ticksPassed <= 0)
             return;
 
-        world.profiler.startSection("wywa_chunk_loaded");
-        world.profiler.startSection("wywa_random");
         int randomPassed = Math.min(ticksPassed, Config.maxRandomTickingBlocksTicks);
         int randomAmount = this.getRandomTickAmountPerBlockInSixteenCube(randomPassed);
         if (randomAmount > 0) {
@@ -55,14 +53,15 @@ public abstract class AbstractChunkData implements ICapabilitySerializable<NBTTa
                     this.tickRandomlyAt(pos, randomAmount);
             }
         }
-        world.profiler.endSection();
 
-        world.profiler.startSection("wywa_tiles");
         int tilePassed = Math.min(ticksPassed, Config.maxTickingTileEntitiesTicks);
-        if (tilePassed > 0)
-            this.tickTileEntities(tilePassed);
-        world.profiler.endSection();
-        world.profiler.endSection();
+        if (tilePassed > 0) {
+            if (Config.useAsyncOperations) {
+                CompletableFuture.runAsync(() -> this.tickTileEntities(tilePassed));
+            } else {
+                this.tickTileEntities(tilePassed);
+            }
+        }
     }
 
     protected void tickTileEntity(TileEntity tile) {
