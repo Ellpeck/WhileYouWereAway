@@ -8,9 +8,10 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
-  
+
 variables:
   GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
+  BUILD_NUMBER: $(Build.BuildId)
 
 steps:
 - task: Cache@2
