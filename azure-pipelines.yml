@@ -28,7 +28,7 @@ steps:
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
-    tasks: 'clean build'
+    tasks: 'clean build deobfJar'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'build/libs'
