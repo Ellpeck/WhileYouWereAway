@@ -67,7 +67,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    provided 'io.github.opencubicchunks:cubicchunks-api:1.12.2-0.0-20200209.201115-237'
+    provided 'io.github.opencubicchunks:cubicchunks-api:1.12.2-0.0-SNAPSHOT'
 }
 
 processResources {
