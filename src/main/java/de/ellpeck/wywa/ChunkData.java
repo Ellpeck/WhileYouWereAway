@@ -38,8 +38,9 @@ public class ChunkData extends AbstractChunkData {
 
     @Override
     protected void tickTileEntities(int amount) {
+        List<TileEntity> tiles = new ArrayList<>(this.chunk.getTileEntityMap().values());
         for (int i = 0; i < amount; i++) {
-            for (TileEntity tile : this.chunk.getTileEntityMap().values())
+            for (TileEntity tile : tiles)
                 this.tickTileEntity(tile);
         }
     }
