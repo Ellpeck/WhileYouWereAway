@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
-@Mod(modid = WYWA.MODID, name = WYWA.NAME, version = WYWA.VERSION)
+@Mod(modid = WYWA.MODID, name = WYWA.NAME, version = WYWA.VERSION, acceptableRemoteVersions = "*")
 public class WYWA {
 
     public static final String MODID = "wywa";
